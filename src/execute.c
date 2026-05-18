@@ -20,7 +20,8 @@ void exec_new(lo3_val a1, lo3_val a2) {
 		snprintf(buf, sizeof(buf), "%d", a1.value.num);
 		lo3_warn("Are you sure you want to set the name as a number?", buf);
 		name = buf;
-	} else {
+	}
+	else {
 		name = a1.value.string;
 	}
 
@@ -28,7 +29,8 @@ void exec_new(lo3_val a1, lo3_val a2) {
 	unsigned int type;
 	if (!a2.chooseType) {
 		type = (unsigned int)a2.value.num;
-	} else {
+	}
+	else {
 		char *end;
 		errno = 0;
 		long val = strtol((char *)a2.value.string, &end, 10);
@@ -64,7 +66,8 @@ void exec_free(lo3_val a1, lo3_val a2) {
 		lo3_warn("Are you sure you want to delete some var called:\nDoing it anyways... ",
 		         buf);
 		name = buf;
-	} else {
+	}
+	else {
 		name = a1.value.string;
 	}
 
@@ -90,7 +93,8 @@ void exec_asn(lo3_val a1, lo3_val a2) {
 		snprintf(buf, sizeof(buf), "%d", a1.value.num);
 		name = buf;
 
-	} else {
+	}
+	else {
 		name = a1.value.string;
 	}
 
@@ -103,7 +107,8 @@ void exec_asn(lo3_val a1, lo3_val a2) {
 	// set
 	if (!a2.chooseType) {
 		var_setNum(name, a2.value.num);
-	} else {
+	}
+	else {
 		var_setString(name, a2.value.string);
 	}
 }
@@ -119,7 +124,8 @@ void exec_add(lo3_val a1, lo3_val a2) {
 		snprintf(buf, sizeof(buf), "%d", a1.value.num);
 		name = buf;
 
-	} else {
+	}
+	else {
 		name = a1.value.string;
 	}
 
@@ -147,7 +153,8 @@ void exec_sub(lo3_val a1, lo3_val a2) {
 		snprintf(buf, sizeof(buf), "%d", a1.value.num);
 		name = buf;
 
-	} else {
+	}
+	else {
 		name = a1.value.string;
 	}
 
@@ -175,7 +182,8 @@ void exec_mul(lo3_val a1, lo3_val a2) {
 		snprintf(buf, sizeof(buf), "%d", a1.value.num);
 		name = buf;
 
-	} else {
+	}
+	else {
 		name = a1.value.string;
 	}
 
@@ -203,7 +211,8 @@ void exec_div(lo3_val a1, lo3_val a2) {
 		snprintf(buf, sizeof(buf), "%d", a1.value.num);
 		name = buf;
 
-	} else {
+	}
+	else {
 		name = a1.value.string;
 	}
 
@@ -237,7 +246,8 @@ void exec_jmp(lo3_val a1, lo3_val a2) {
 	if (!a1.chooseType) {
 		(void)snprintf(buf, sizeof(buf), "%d", a1.value.num);
 		name = buf;
-	} else {
+	}
+	else {
 		name = a1.value.string;
 	}
 
@@ -277,7 +287,8 @@ void exec_label(lo3_val a1, lo3_val a2) {
 	if (!a1.chooseType) {
 		(void)snprintf(buf, sizeof(buf), "%d", a1.value.num);
 		name = buf;
-	} else {
+	}
+	else {
 		name = a1.value.string;
 	}
 
@@ -301,7 +312,8 @@ void exec_out(lo3_val a1, lo3_val a2) {
 	if (!a1.chooseType) {
 		(void)snprintf(buf, sizeof(buf), "%d", a1.value.num);
 		name = buf;
-	} else {
+	}
+	else {
 		name = a1.value.string;
 	}
 
@@ -334,13 +346,15 @@ void exec_in(lo3_val a1, lo3_val a2) {
 	if (!a1.chooseType) {
 		snprintf(numNameBuf, sizeof(numNameBuf), "%d", a1.value.num);
 		name = numNameBuf;
-	} else {
+	}
+	else {
 		name = a1.value.string;
 	}
 
 	if (!a2.chooseType) {
 		var_setNum(name, temp.value.num);
-	} else {
+	}
+	else {
 		var_setString(name, temp.value.string);
 	}
 }
@@ -350,7 +364,7 @@ void exec_cmp(lo3_val a1, lo3_val a2) {
 
 	if (a1.chooseType || a2.chooseType) {
 		lo3_error("You can not compare char*'s,\n"
-	    "Please use the coresponding std-func!, from {string.c}", "");
+			"Please use the coresponding std-func!, from {string.c}", "");
 		return;
 	}
 
@@ -373,7 +387,7 @@ void exec_small(lo3_val a1, lo3_val a2) {
 
 	if (a1.chooseType || a2.chooseType) {
 		lo3_error("You can not compare char*'s,\n"
-	    "Please use the coresponding std-func!, from {string.c}", "");
+			"Please use the coresponding std-func!, from {string.c}", "");
 		return;
 	}
 
@@ -396,7 +410,7 @@ void exec_big(lo3_val a1, lo3_val a2) {
 
 	if (a1.chooseType || a2.chooseType) {
 		lo3_error("You can not compare char*'s,\n"
-	    "Please use the coresponding std-func!, from {string.c}", "");
+			"Please use the coresponding std-func!, from {string.c}", "");
 		return;
 	}
 

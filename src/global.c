@@ -29,8 +29,6 @@ lo3_val g_get(int index) {
 }
 
 // todo: add the way to check for isSet[index]
-// NOTE: it could be fixed already ....!
-//
 // ///// More Informations /////
 // there is a array called isSet, the purpose is to
 // check if any of the indexes are already set or not set at all.
@@ -60,7 +58,6 @@ void g_set(int index, lo3_val value) {
 }
 
 // todo: add the way to check for isSet[index]
-//
 // ///// More Informations /////
 // there is a array called isSet, the purpose is to
 // check if any of the indexes are already set or not set at all.
@@ -118,8 +115,6 @@ int g_setType(int index, lo3_val type) {
 }
 
 // todo: inpliment g_getValue
-// NOTE: WIP — not implemented yet!
-//
 // ///// More Informations /////
 // This function should return the lo3_val stored at g.value[index].
 // For now it returns a placeholder (chooseType = -1) to avoid
@@ -131,12 +126,14 @@ lo3_val g_getValue(int index) {
 	return placeholder;
 }
 
-// NOTE: this func should not be used by any seriously codebase, this func
-// can selfish not fully cover if it is OOB or if the value is even an integer.
-// PLEASE:
-// Consider using the func g_getValue() even if you then must check which type it is by yourself!
-// if you really want to use this func, use the MACRO called G_GETV(index), this will be replaced by
-// g_getNum(...) or g_getString(...)
+/*
+ * NOTE: this func should not be used by any seriously codebase, this func
+ * can selfish not fully cover if it is OOB or if the value is even an integer.
+ * PLEASE:
+ * Consider using the func g_getValue() even if you then must check which type it is by yourself!
+ * if you really want to use this func, use the MACRO called G_GETV(index), this will be replaced by
+ * g_getNum(...) or g_getString(...)
+ */
 int g_getNum(int index) {
 	if (index >= G_SIZE || index < 0) {
 		return -1; // could also eventually be data!!!
@@ -145,12 +142,14 @@ int g_getNum(int index) {
 	return g.value[index].value.num;
 }
 
-// NOTE: this func should not be used by any seriously codebase, this func
-// can selfish not fully cover if it is OOB or if the value is even a String.
-// PLEASE:
-// Consider using the func g_getValue() even if you then must check which type it is by yourself!
-// if you really want to use this func, use the MACRO called G_GETV(index), this will be replaced by
-// g_getNum(...) or g_getString(...) !!!
+/*
+ * NOTE: this func should not be used by any seriously codebase, this func
+ * can selfish not fully cover if it is OOB or if the value is even a String.
+ * PLEASE:
+ * Consider using the func g_getValue() even if you then must check which type it is by yourself!
+ * if you really want to use this func, use the MACRO called G_GETV(index), this will be replaced by
+ * g_getNum(...) or g_getString(...) !!!
+ */
 char *g_getString(int index) {
 	if (index >= G_SIZE || index < 0) {
 		return "_error"; // could also eventually be data!!!
@@ -191,9 +190,7 @@ void g_fasterInit(char *line) {
 			ip++; // skip ','
 		}
 
-		// todo:
-		// this code should really use g_setValue(), but by now it is not avaible!
-		//
+		// todo: this code should really use g_setValue(), but by now it is not avaible!
 		// ///// More Informations /////
 		// this func should use g_setValue() so global itself will carry about formating
 		// every tiny bit right. And this code wont use lo3_val value !!! After it

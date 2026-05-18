@@ -17,13 +17,12 @@ int main(int argc, char *argv[]) {
 	FILE *file;
 	if (pars_isFileValid(argv[1], &file)) {
 		lo3_error("Could not load the coresponding file!", argv[1]);
-		(void)(fclose(file));
+		(void)fclose(file);
 		return 1;
 	}
 
 	openFile = file;
-	// TODO:
-	// let the system(cpp file) run before
+	// todo: let the system(cpp file) run before
 	// ///// More Informations /////
 	// Only run that call if file ends with .LO3 or the --cpp flag is set!
 	

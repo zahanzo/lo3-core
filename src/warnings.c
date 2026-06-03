@@ -7,7 +7,9 @@
 	if (_check_null(msg) == -1) { \
 		(void)fprintf(stderr, CLR_BOLD CLR_RED "[ERROR]: Something went wrong. \nOr msg == empty?\n" CLR_RESET); \						\
 	} \
-	_bare_send(msg, context, "DEBUG"); \
+	else { \
+		_bare_send(msg, context, "DEBUG"); \
+	} \
 
 static int _check_null(const char *msg) {
 
@@ -34,6 +36,7 @@ void lo3_warn(const char *msg, const char *context) {
 
 	if (_check_null(msg) == -1) {
 		_bare_send("Could not send error message!", context, "ERROR");
+		return;
 	}
 	_bare_send(msg, context, "WARN");
 }
@@ -42,6 +45,7 @@ void lo3_error(const char *msg, const char *context) {
 
 	if (_check_null(msg) == -1) {
 		_bare_send("Could not send error message!", context, "ERROR");
+		return;
 	}
 	_bare_send(msg, context, "ERROR");
 }

@@ -2,7 +2,3 @@
 // Read the License file for more informations about the license.
 
 #pragma once
-#include <stdio.h>
-
-///// main.c /////
-extern FILE *openFile;

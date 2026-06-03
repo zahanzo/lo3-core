@@ -10,7 +10,7 @@ typedef enum {
 } lo3_types;
 
 typedef union {
-	 signed int num;
+	signed int num;
 	unsigned char *string;
 	double numD;
 } lo3_value;

@@ -51,7 +51,7 @@ int cf_getPos(const char *name) {
 // important: this func should only be used intern, because it's not error proof
 void cf_setCursorPos(const int i) {
 
-	fseek(openFile, i, SEEK_SET);
+	(void)fseek(openFile, i, SEEK_SET);
 }
 
 int cf_getCursorPos(void) {

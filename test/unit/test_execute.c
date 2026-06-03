@@ -15,8 +15,6 @@
 
 FILE *openFile = NULL;
 
-static char dummy[2] = {0, 0};
-
 static lo3_val nval(int n) {
     lo3_val v;
     v.type = TYPE_num;
@@ -47,103 +45,103 @@ void tearDown(void) {
 // ── exec_cmp ──────────────────────────────────────────────────────────────────
 
 void test_exec_cmp_equal_sets_true(void) {
-    exec_cmp(nval(5), nval(5), dummy);
+    exec_cmp(nval(5), nval(5));
     TEST_ASSERT_EQUAL_INT(TRUE, g_getNum(0));
 }
 
 void test_exec_cmp_not_equal_sets_false(void) {
-    exec_cmp(nval(3), nval(7), dummy);
+    exec_cmp(nval(3), nval(7));
     TEST_ASSERT_EQUAL_INT(FALSE, g_getNum(0));
 }
 
 void test_exec_cmp_zero_equal(void) {
-    exec_cmp(nval(0), nval(0), dummy);
+    exec_cmp(nval(0), nval(0));
     TEST_ASSERT_EQUAL_INT(TRUE, g_getNum(0));
 }
 
 void test_exec_cmp_negative_equal(void) {
-    exec_cmp(nval(-4), nval(-4), dummy);
+    exec_cmp(nval(-4), nval(-4));
     TEST_ASSERT_EQUAL_INT(TRUE, g_getNum(0));
 }
 
 void test_exec_cmp_negative_not_equal(void) {
-    exec_cmp(nval(-1), nval(1), dummy);
+    exec_cmp(nval(-1), nval(1));
     TEST_ASSERT_EQUAL_INT(FALSE, g_getNum(0));
 }
 
 void test_exec_cmp_string_arg_no_crash(void) {
     // lo3_error is called; result is undefined but must not crash
-    exec_cmp(sval("a"), nval(0), dummy);
+    exec_cmp(sval("a"), nval(0));
 }
 
 // ── exec_small ────────────────────────────────────────────────────────────────
 
 void test_exec_small_less_than_sets_true(void) {
-    exec_small(nval(2), nval(5), dummy);
+    exec_small(nval(2), nval(5));
     TEST_ASSERT_EQUAL_INT(TRUE, g_getNum(0));
 }
 
 void test_exec_small_equal_sets_false(void) {
-    exec_small(nval(5), nval(5), dummy);
+    exec_small(nval(5), nval(5));
     TEST_ASSERT_EQUAL_INT(FALSE, g_getNum(0));
 }
 
 void test_exec_small_greater_sets_false(void) {
-    exec_small(nval(8), nval(3), dummy);
+    exec_small(nval(8), nval(3));
     TEST_ASSERT_EQUAL_INT(FALSE, g_getNum(0));
 }
 
 void test_exec_small_negative_less_sets_true(void) {
-    exec_small(nval(-5), nval(0), dummy);
+    exec_small(nval(-5), nval(0));
     TEST_ASSERT_EQUAL_INT(TRUE, g_getNum(0));
 }
 
 void test_exec_small_string_arg_no_crash(void) {
-    exec_small(sval("x"), nval(0), dummy);
+    exec_small(sval("x"), nval(0));
 }
 
 // ── exec_big ──────────────────────────────────────────────────────────────────
 
 void test_exec_big_greater_than_sets_true(void) {
-    exec_big(nval(9), nval(3), dummy);
+    exec_big(nval(9), nval(3));
     TEST_ASSERT_EQUAL_INT(TRUE, g_getNum(0));
 }
 
 void test_exec_big_equal_sets_false(void) {
-    exec_big(nval(4), nval(4), dummy);
+    exec_big(nval(4), nval(4));
     TEST_ASSERT_EQUAL_INT(FALSE, g_getNum(0));
 }
 
 void test_exec_big_less_sets_false(void) {
-    exec_big(nval(1), nval(10), dummy);
+    exec_big(nval(1), nval(10));
     TEST_ASSERT_EQUAL_INT(FALSE, g_getNum(0));
 }
 
 void test_exec_big_negative_greater_sets_true(void) {
-    exec_big(nval(0), nval(-1), dummy);
+    exec_big(nval(0), nval(-1));
     TEST_ASSERT_EQUAL_INT(TRUE, g_getNum(0));
 }
 
 void test_exec_big_string_arg_no_crash(void) {
-    exec_big(nval(0), sval("y"), dummy);
+    exec_big(nval(0), sval("y"));
 }
 
 // ── exec_label ────────────────────────────────────────────────────────────────
 
 void test_exec_label_registers_label(void) {
-    exec_label(sval("myLabel"), nval(0), dummy);
+    exec_label(sval("myLabel"), nval(0));
     TEST_ASSERT_TRUE(cf_findLabel("myLabel") >= 0);
 }
 
 void test_exec_label_duplicate_no_crash(void) {
     // second call triggers lo3_error but must not crash
-    exec_label(sval("dupLabel"), nval(0), dummy);
-    exec_label(sval("dupLabel"), nval(0), dummy);
+    exec_label(sval("dupLabel"), nval(0));
+    exec_label(sval("dupLabel"), nval(0));
     TEST_ASSERT_TRUE(cf_findLabel("dupLabel") >= 0);
 }
 
 void test_exec_label_numeric_name(void) {
-    exec_label(nval(42), nval(0), dummy);
+    exec_label(nval(42), nval(0));
     TEST_ASSERT_TRUE(cf_findLabel("42") >= 0);
 }
 

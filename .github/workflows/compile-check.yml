@@ -49,24 +49,29 @@ jobs:
       - name: Make executable
         run: chmod +x bin/lo3
 
-      - name: Run all test files
-        id: tests
+      - name: Generate aggregate file
         run: |
-          failed=0
-          for f in tests/*.lo3; do
-            echo "::group::Running $f"
-            if ./bin/lo3 "$f"; then
-              echo "PASS: $f"
-            else
-              echo "FAIL: $f"
-              failed=1
-            fi
-            echo "::endgroup::"
-          done
-          exit $failed
+          shopt -s nullglob
+          SYNTAX_DIR="tests/syntax"
+          AGGREGATE="tests/general.lo3"
+          AGG_DIR="$(dirname "$AGGREGATE")"
+          {
+            echo "@.%"
+            for f in "$SYNTAX_DIR"/*.lo3; do
+              rel="$(realpath --relative-to="$AGG_DIR" "$f")"
+              echo "#include \"$rel\""
+            done
+          } > "$AGGREGATE"
+          echo "::group::Generated aggregate ($AGGREGATE)"
+          cat "$AGGREGATE"
+          echo "::endgroup::"
 
-      - name: Run general test
-        run: ./bin/lo3 tests/general.lo3
+      - name: Preprocess (C preprocessor)
+        run: cpp -P -x assembler-with-cpp tests/general.lo3 -o tests/general.preprocessed.lo3
+
+      - name: Run tests
+        id: tests
+        run: ./bin/lo3 tests/general.preprocessed.lo3
 
       - name: Report test status
         if: always()
@@ -75,5 +80,5 @@ jobs:
             echo "## ✅ Tests passed" >> $GITHUB_STEP_SUMMARY
           else
             echo "## ❌ Tests failed" >> $GITHUB_STEP_SUMMARY
-            echo "One or more test files **failed**. Check the logs above." >> $GITHUB_STEP_SUMMARY
+            echo "The test run **failed**. Check the logs above." >> $GITHUB_STEP_SUMMARY
           fi

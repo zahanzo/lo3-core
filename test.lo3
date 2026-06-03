@@ -5,6 +5,7 @@
 #= _a $100
 
 // output
+#o _should-output:-100: $0
 #o %a $0
 
 // cleanup & exit(0)

@@ -35,7 +35,10 @@ typedef enum {
 
 	RET_good = '0', // stop the program with exit code 0
 	RET_bad = '1',  // return the program with exit code 1
-	RET_smart = 'r' // some feature which needs call func, but this is not avaible yet...
+	RET_smart = 'r', // some feature which needs call func, but this is not avaible yet...
+
+	// syscall
+	SYS_call = 's'
 
 } lo3_cmds;
 
@@ -60,3 +63,4 @@ void exec_free(lo3_val a1, lo3_val a2);
 void exec_cmp(lo3_val a1, lo3_val a2);
 void exec_small(lo3_val a1, lo3_val a2);
 void exec_big(lo3_val a1, lo3_val a2);
+void exec_syscall(lo3_val a1, lo3_val a2);

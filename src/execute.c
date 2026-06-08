@@ -10,6 +10,11 @@
 #include <limits.h>
 #include <string.h>
 
+#ifdef __linux__
+#include <sys/syscall.h>
+#include <unistd.h>
+#endif
+
 void exec_new(lo3_val a1, lo3_val a2) {
 
 	unsigned char buf[64];
@@ -389,6 +394,26 @@ void exec_small(lo3_val a1, lo3_val a2) {
 		return;
 	}
 	g_set(0, false);
+}
+
+void exec_syscall(lo3_val a1, lo3_val a2) {
+
+#ifdef __linux__
+	if (a1.chooseType || a2.chooseType) {
+		lo3_error("exec_syscall requires two numeric arguments", "");
+		return;
+	}
+
+	long ret = syscall((long)a1.value.num, (long)a2.value.num);
+
+	lo3_val result;
+	result.value.num = (int)ret;
+	result.chooseType = 0;
+
+	g_set(0, result);
+#else
+	lo3_warn("syscall (#s) is not supported on this platform", "");
+#endif
 }
 
 // compare num > num, if true -> g[0] = 1, else g[0] = 0;!!!

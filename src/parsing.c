@@ -320,6 +320,10 @@ int pars_dispatch(lo3_cmds cmd, lo3_val a1, lo3_val a2) {
 		exec_big(a1, a2);
 		break;
 
+	case SYS_call:
+		exec_syscall(a1, a2);
+		break;
+
 	default:
 		lo3_error("Unknown command!", "");
 		break;

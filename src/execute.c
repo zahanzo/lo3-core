@@ -14,6 +14,8 @@
 	#include <unistd.h>
 #endif
 
+#define LOW_32bit_FULL 0xFFFFFFFF
+
 void exec_new(lo3_val a1, lo3_val a2)
 {
 
@@ -481,19 +483,20 @@ inline void exec_sys(lo3_val a1, lo3_val a2)
 	arg1 = ((long)g_getNum(3)) << 32 | (unsigned int)g_getNum(2);
 	arg2 = ((long)g_getNum(5)) << 32 | (unsigned int)g_getNum(4);
 
-	int ret = syscall((unsigned int)a1.value.num, arg0, arg1, arg2);
+	long ret = syscall((unsigned int)a1.value.num, arg0, arg1, arg2);
 
 	if (ret == -1) {
 		lo3_error("Syscall failed", "");
 	}
 
-	// tmp
-	lo3_val retVal;
-	retVal.type = TYPE_num;
-	retVal.chooseType = 0;
-	retVal.value.num = ret;
+	// splitt ret -> 2 
+	int buf[2];
+	buf[0] = (unsigned int) (a >> 32);
+	buf[1] = (unsigned int) (a & 0xFFFFFFFF);
 
-	g_set(0, retVal);
+	// using: LOW_32bit_FULL
+	g_set(0, buf[0]);
+	g_set(1, buf[1]);
 #else
 	(void)a1;
 	(void)a2;

@@ -4,6 +4,7 @@
 #define TRUE 1
 #define FALSE 0
 #define ARRAY_SIZE 254
+#define BUF_SIZE 255
 
 extern char rush;
 extern char rush_target[256];
@@ -27,3 +28,7 @@ int cf_getPos(const char *name);
 
 void cf_setCursorPos(const int i);
 int cf_getCursorPos(void);
+
+// parsing
+void cf_fasterLabel(char line[255]);
+void cf_fasterJumptoLabel(char line[255]);

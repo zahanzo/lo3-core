@@ -70,3 +70,53 @@ int cf_jumpToLabel(const char *name) {
 	cf_setCursorPos(cf.pos[index]);
 	return 0;
 }
+
+inline char *cf_buildPiece(char *buf, char line[BUF_SIZE], int index) {
+	
+	int max = 0; // if err, it will not break;
+	for (int i = index; i < BUF_SIZE; i++) {
+
+		if (line[i] == '\0') {
+			break;
+		}
+		buf[max++] = line[i];
+	}
+	buf[max] = '\0';
+
+	return buf;
+}
+
+void cf_fasterLabel(char line[BUF_SIZE]) {
+
+	if (line == NULL | line[0] == '\0') {
+		lo3_error("Could not execute the fasterLabel func - are you sure crocodile?", line);
+		return;
+	}
+
+	// NOTICE: index: 2 because it should always skip: "@:"
+	// from name
+	char buf[BUF_SIZE];
+	cf_buildPiece(buf, line, 2); 
+
+	lo3_val val;
+	val.chooseType = 3;
+	val.value.string = buf;
+
+	// quick hack... do never do that if you are not sure what that func does...
+	// a2 is normaly doing nothing so this is ok here...
+	exec_label(val, val);
+}
+
+void cf_fasterJumptoLabel(char line[255]) {
+	
+	if (line == NULL | line[0] == '\0') {
+		lo3_error("Could not execute the fasterLabel func - are you sure crocodile?", line);
+		return;
+	}
+
+	// NOTICE: index: 2 because it should always skip: "@>"
+	// from name
+	char buf[BUF_SIZE];
+	cf_buildPiece(buf, line, 2); 
+	cf_jumpToLabel(buf);
+}

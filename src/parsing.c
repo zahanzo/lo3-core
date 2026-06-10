@@ -70,6 +70,15 @@ parsing:
 
 				g_fasterInit(line);
 			}
+			else if(line[1] == ':') {
+
+				cf_fasterLabel(line);
+				// exec_label("$0", "$0");
+			}
+			else if (line[1] == '>') {
+				// jump to label
+				cf_fasterJumptoLabel(line);
+			}
 		}
 
 		if (line[0] != LO3_STARTING_LINE) {

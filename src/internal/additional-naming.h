@@ -7,6 +7,9 @@
 #define ATYPE_array 0b10
 #define ATYPE_string 0b11
 
+// lower 32-bit mask for splitting a 64-bit value
+#define LOW_32bit_FULL 0xFFFFFFFFUL
+
 // sleep(ms) macro
 #ifdef _WIN32
 #include <windows.h>

@@ -1,6 +1,7 @@
 // Copyright (c) 2026 seesee010
 // Read the License file for more informations about the license.
 
+#include "./internal/additional-naming.h"
 #include "./internal/bare-var.h"
 #include "./internal/core.h"
 #include "./internal/global.h"
@@ -9,6 +10,10 @@
 #include <errno.h>
 #include <limits.h>
 #include <string.h>
+#ifdef __linux__
+#include <sys/syscall.h>
+#include <unistd.h>
+#endif
 
 void exec_new(lo3_val a1, lo3_val a2) {
 
@@ -413,3 +418,37 @@ void exec_big(lo3_val a1, lo3_val a2) {
 	}
 	g_set(0, false);
 }
+
+#ifdef __linux__
+// a1 = syscall number (numeric)
+// a2 = arg0, g[2] = arg1, g[3] = arg2
+// result: g[0] = lower 32 bits, g[1] = upper 32 bits
+void exec_sys(lo3_val a1, lo3_val a2) {
+
+	if (a1.chooseType) {
+		lo3_error("Syscall number must be numeric", "");
+		return;
+	}
+
+	long ret = syscall((long)a1.value.num,
+	                   (long)a2.value.num,
+	                   (long)g_getNum(2),
+	                   (long)g_getNum(3));
+
+	if (ret == -1) {
+		lo3_error("Syscall failed", "");
+		return;
+	}
+
+	// split ret into two 32-bit halves
+	// g[0] = lower 32 bits, g[1] = upper 32 bits
+	lo3_val low, high;
+	low.chooseType  = 0;
+	low.value.num   = (int)((unsigned long)ret & LOW_32bit_FULL);
+	high.chooseType = 0;
+	high.value.num  = (int)((unsigned long)ret >> 32);
+
+	g_set(0, low);
+	g_set(1, high);
+}
+#endif

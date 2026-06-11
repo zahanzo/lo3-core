@@ -320,6 +320,12 @@ int pars_dispatch(lo3_cmds cmd, lo3_val a1, lo3_val a2) {
 		exec_big(a1, a2);
 		break;
 
+#ifdef __linux__
+	case CNT_sys:
+		exec_sys(a1, a2);
+		break;
+#endif
+
 	default:
 		lo3_error("Unknown command!", "");
 		break;

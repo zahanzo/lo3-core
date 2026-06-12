@@ -37,12 +37,11 @@ int pars_isFileValid(char *name, FILE **file) {
 }
 
 int pars_file(FILE *file) {
+    char *line = NULL;
+    size_t len = 0;
+    char arg1[64] = {0}, arg2[64] = {0};
 
-	char *line = NULL;
-	size_t len = 0;
-	char arg1[64] = {0}, arg2[64] = {0};
-
-	int pos0 = ftell(file);
+    int pos0 = ftell(file);
 
 	// todo: make getline avaible on other os
 	//
@@ -53,90 +52,123 @@ int pars_file(FILE *file) {
 	// - use the preprocessor funcs, like ifdef check for linux and win etc
 
 parsing:
-	while (lastLineOffset = ftell(file), GETLINE(&line, &len, file)) {
+    while (lastLineOffset = ftell(file), GETLINE(&line, &len, file)) {
 
-		currentLine++;
-		line[strcspn(line, "\r\n")] = '\0'; // 0xRobert: Changed for include Carriage Return (\r)
+        currentLine++;
+        line[strcspn(line, "\r\n")] = '\0'; 
 
-		// syntax sugar
-		if (line[0] == '@') {
+        // 0xRobert: Ignore emoty lines or comments
+        if (line[0] == '\0' || (line[0] == '/' && line[1] == '/')) {
+            free(line);
+            line = NULL;
+            len = 0;
+            continue;
+        }
 
-			if (line[1] == '.') {
-				LO3_STARTING_LINE = line[2];
+        // 0xRobert: Treats syntax sugar
+        if (line[0] == '@') {
+            if (line[1] == '.') {
+                int idx = 2;
+                while (line[idx] == ' ' || line[idx] == '\t') idx++;
+                if (line[idx] != '\0') {
+                    LO3_STARTING_LINE = line[idx];
+                }
 
-			} else if (line[1] == '{') {
-				// @{1:$10,10:_Hello}
-				// index | type | word
+                free(line);
+                line = NULL;
+                len = 0;
+                continue; 
+            } else if (line[1] == '{') {
+                g_fasterInit(line);
+                free(line);
+                line = NULL;
+                len = 0;
+                continue;
+            }
+        }
 
-				g_fasterInit(line);
-			}
-		}
+        // 0xRobert: Verify if the line starts with a character invalid of cmd
+        if (line[0] != LO3_STARTING_LINE) {
+            free(line);
+            line = NULL;
+            len = 0;
+            continue;
+        }
 
-		if (line[0] != LO3_STARTING_LINE) {
-			continue;
-		}
+        if (strlen(line) < 3) {
+            lo3_warn("You used some kind of magic line...", "");
+            free(line);
+            line = NULL;
+            len = 0;
+            continue;
+        }
 
-		if (strlen(line) < 3) {
-			lo3_warn("You used some kind of magic line,"
-			         "which is propaply not lo3-core syntax, are you sure you wanna do "
-			         "this???",
-			         "");
-			continue;
-		}
+        lo3_cmds cmds = (lo3_cmds)line[1];
 
-		lo3_cmds cmds = (lo3_cmds)line[1];
+        memset(arg1, 0, sizeof(arg1));
+        memset(arg2, 0, sizeof(arg2));
 
-		// find the TYPES of arg
+        char *ptr = &line[3];
+        int arg_idx = 0;
+        char *args[2] = {arg1, arg2};
 
-		// could lead to wrong var names, but else it could eventually crash.
-		// Both are not that great.
-		// maybe there could be a check or lo3_warn() about wrong var name size.
+        while (arg_idx < 2) {
+            while (*ptr == ' ' || *ptr == '\t') ptr++; 
+            if (*ptr == '\0') break; 
 
-		// 0xRobert: Clean buffers.
-		memset(arg1, 0, sizeof(arg1));
-		memset(arg2, 0, sizeof(arg2));
+            int j = 0;
+            if (*ptr == '"') {
+                args[arg_idx][j++] = TYPE_string; 
+                ptr++; 
+                
+                while (*ptr && j < 62) {
+                    if (*ptr == '\\' && *(ptr + 1) != '\0') {
+                        args[arg_idx][j++] = *ptr++;
+                        args[arg_idx][j++] = *ptr++;
+                        continue;
+                    }
+                    if (*ptr == '"') {
+                        ptr++; 
+                        break;
+                    }
+                    args[arg_idx][j++] = *ptr++;
+                }
+                args[arg_idx][j] = '\0';
+            } else {
+                while (*ptr && *ptr != ' ' && *ptr != '\t' && j < 62) {
+                    args[arg_idx][j++] = *ptr++;
+                }
+                args[arg_idx][j] = '\0';
+            }
+            arg_idx++;
+        }
 
-		// 0xRobert: Skip blank initial spaces after command
-		char *p1 = &line[3];
-		while (*p1 == ' ' || *p1 == '\t') p1++;
+        lo3_val a1 = pars_resv(arg1);
+        lo3_val a2 = pars_resv(arg2);
 
-		// 0xRobert: If it is a STM_out and starts with '_':
-		if (cmds == STM_out && *p1 == '_') {
-			strncpy(arg1, p1, sizeof(arg1) - 1);
-			arg1[sizeof(arg1) - 1] = '\0';
-			arg2[0] = '\0'; // Secound ARG keeps empty
-		} else {
-			(void)sscanf(&line[3], " %63s %63s", arg1, arg2);
-		}
+        signed int returnVal = pars_dispatch(cmds, a1, a2);
 
-		lo3_val a1 = pars_resv(arg1);
-		lo3_val a2 = pars_resv(arg2);
+        if (returnVal != -1) {
+            free(line);
+            return returnVal;
+        }
 
-		signed int returnVal = pars_dispatch(cmds, a1, a2);
+        free(line);
+        line = NULL;
+        len = 0;
+    }
 
-		if (returnVal != -1) {
-			free(line);
-			return returnVal;
-		}
-
-		free(line);
-		line = NULL;
-		len = 0;
-	}
-
-	if (rush) {
-		fseek(file, pos0, SEEK_SET);
-
-		if (!isWarped) {
-			isWarped = TRUE;
-			goto parsing;
-
-		} else {
-			lo3_error("Could not find the label, did you misspell it???", "");
-			return -1;
-		}
-	}
-	return 0;
+    if (rush) {
+        fseek(file, pos0, SEEK_SET);
+        if (!isWarped) {
+            isWarped = TRUE;
+            goto parsing;
+        } else {
+            lo3_error("Could not find the label...", "");
+            return -1;
+        }
+    }
+    return 0;
 }
 
 lo3_val pars_resv(char type[64]) {
@@ -194,7 +226,6 @@ lo3_val pars_resv(char type[64]) {
 		break;
 
 	case TYPE_string:
-
 		result.value.string = &type[1];
 		result.chooseType = 3;
 		break;

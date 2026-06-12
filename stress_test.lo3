@@ -1,0 +1,20 @@
+@. #
+
+// Test 1: Multiple spaces inside string and keeping the second argument variable intact
+#n _a $100
+#o "The current system configuration status is:" _a
+
+// Test 2: Standard message with spaces and special punctuation
+#o "--- STARTING SYSTEM STRESS TEST ---" $0
+
+// Test 3: Escaped double quotes inside the string boundary
+#o "He said \"The FSM lexer is working perfectly\" to the console" $0
+
+// Test 4: Path strings with double backslashes (very common in Windows systems)
+#o "Loading core language definitions from C:\\lo3\\sys\\" $0
+
+// Test 5: Complex string with combined symbols and carriage returns indicators
+#o "Value details -> [ID: 100 | TYPE: FSM_STRING] \n" $0
+
+#o "--- STRESS TEST COMPLETED SUCCESFULLY ---" $0
+#0 $0 $0

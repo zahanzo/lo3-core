@@ -1,0 +1,59 @@
+# lo3-core .clang-format
+# Maps the parts of CODING_GUIDELINES.md that clang-format can enforce.
+# NOTE: nesting depth, naming conventions, the blank-line/grouping rules
+# and comment-style rules are NOT enforceable here -> need a custom script.
+
+Language: Cpp
+Standard: c++11
+
+# ---- Indentation ----
+UseTab: ForIndentation
+TabWidth: 8
+IndentWidth: 8
+ContinuationIndentWidth: 8
+IndentCaseLabels: false
+
+# ---- Braces ----
+# function + control braces on same line, but else/catch break onto next line
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterFunction: false
+  AfterControlStatement: Never
+  AfterEnum: false
+  AfterStruct: false
+  AfterUnion: false
+  BeforeElse: true
+  BeforeCatch: true
+  SplitEmptyFunction: false
+
+# ---- Short forms: you always use braces / never collapse ----
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: None
+AllowShortBlocksOnASingleLine: Empty
+AllowShortCaseLabelsOnASingleLine: false
+
+# ---- Spacing ----
+SpaceBeforeParens: ControlStatements
+SpaceBeforeAssignmentOperators: true
+SpaceAfterCStyleCast: false
+SpacesInParentheses: false
+SpaceInEmptyBlock: false
+
+# ---- Pointers: char *line ----
+PointerAlignment: Right
+DerivePointerAlignment: false
+
+# ---- Blank lines: keep YOUR semantic blank lines ----
+# critical: you put a blank line after fn signature + after long if-conditions
+KeepEmptyLinesAtTheStartOfBlocks: true
+MaxEmptyLinesToKeep: 1
+
+# ---- Don't reflow lines: your blank-line/grouping style is manual ----
+# 0 = clang-format won't wrap long lines (avoids fighting your grouping rules)
+ColumnLimit: 0
+
+# ---- Misc ----
+SortIncludes: false
+AlignAfterOpenBracket: Align
+AlignTrailingComments: true

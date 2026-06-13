@@ -51,27 +51,44 @@ jobs:
 
       - name: Generate aggregate file
         run: |
-          shopt -s nullglob
-          SYNTAX_DIR="tests/syntax"
-          AGGREGATE="tests/general.lo3"
+          set -euo pipefail
+
+          SYNTAX_DIR="test/syntax"
+          AGGREGATE="test/general.lo3"
           AGG_DIR="$(dirname "$AGGREGATE")"
+
+          if [ ! -d "$SYNTAX_DIR" ]; then
+            echo "::error::Syntax test dir '$SYNTAX_DIR' not found"
+            exit 1
+          fi
+
+          shopt -s nullglob
+          files=("$SYNTAX_DIR"/*.lo3)
+
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "::error::No .lo3 test files in '$SYNTAX_DIR'"
+            exit 1
+          fi
+
+          mkdir -p "$AGG_DIR"
           {
             echo "@.%"
-            for f in "$SYNTAX_DIR"/*.lo3; do
+            for f in "${files[@]}"; do
               rel="$(realpath --relative-to="$AGG_DIR" "$f")"
               echo "#include \"$rel\""
             done
           } > "$AGGREGATE"
+
           echo "::group::Generated aggregate ($AGGREGATE)"
           cat "$AGGREGATE"
           echo "::endgroup::"
 
       - name: Preprocess (C preprocessor)
-        run: cpp -P -x assembler-with-cpp tests/general.lo3 -o tests/general.preprocessed.lo3
+        run: cpp -P -x assembler-with-cpp test/general.lo3 -o test/general.preprocessed.lo3
 
       - name: Run tests
         id: tests
-        run: ./bin/lo3 tests/general.preprocessed.lo3
+        run: ./bin/lo3 test/general.preprocessed.lo3
 
       - name: Report test status
         if: always()

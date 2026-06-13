@@ -3,8 +3,7 @@
 # NOTE: nesting depth, naming conventions, the blank-line/grouping rules
 # and comment-style rules are NOT enforceable here -> need a custom script.
 
-Language: Cpp
-Standard: c++11
+Language: C
 
 # ---- Indentation ----
 UseTab: ForIndentation
